@@ -42,3 +42,9 @@ class ResidualBlock(nn.Module):
         for i in range(self.repeats):
             x = x + self.layers(x)
         return x
+
+
+class YoloV3(nn.Module):
+    def __init__(self) -> None:
+        super().__init__()
+        self.layers = nn.ModuleList()

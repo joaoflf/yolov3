@@ -1,6 +1,6 @@
 import albumentations as A
-from albumentations.pytorch import ToTensorV2
 import cv2
+from albumentations.pytorch import ToTensorV2
 
 DATASET_PATH = "./PASCAL_VOC/"
 IMAGES_PATH = DATASET_PATH + "images/"
@@ -42,4 +42,3 @@ transform = A.Compose(
     ],
     bbox_params=A.BboxParams(format="yolo", label_fields=[], min_visibility=0.4),
 )
-print(type(transform))

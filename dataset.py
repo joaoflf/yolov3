@@ -82,7 +82,6 @@ class YoloVOCDataset(Dataset):
                 anchor_is_taken = targets[grid_index][anchor_in_grid, grid_x, grid_y, 0]
 
                 if not anchor_is_taken and not bbox_has_anchor[grid_index]:
-                    print(grid_index, x, y)
                     # set objectedness
                     targets[grid_index][anchor_in_grid, grid_x, grid_y, 0] = 1
                     # coordinates relative to cell

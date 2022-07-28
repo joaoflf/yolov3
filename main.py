@@ -1,9 +1,10 @@
-import config
 import torch
-from dataset import YoloVOCDataset
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from model import CNNBlock
+
+import config
+from dataset import YoloVOCDataset
+from model import CNNBlock, YoloV3
 
 
 def main():
@@ -15,9 +16,9 @@ def main():
         transform=config.transform,
     )
     loader = DataLoader(dataset, batch_size=1, num_workers=6)
-    model = CNNBlock(in_channels=3, out_channels=32, has_bn=True, kernel_size=3)
+    model = YoloV3()
     for index, (image, label) in enumerate(loader):
-        print(model(image).shape)
+        model(image)
 
 
 if __name__ == "__main__":

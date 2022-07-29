@@ -78,7 +78,7 @@ class ScalePrediction(nn.Module):
 
 
 class YoloV3(nn.Module):
-    def __init__(self) -> None:
+    def __init__(self, num_classes: int) -> None:
         super().__init__()
         self.concat_outputs = {}
 
@@ -109,19 +109,19 @@ class YoloV3(nn.Module):
             ResidualBlock(1024, 4),
         ]
 
-        self.first_prediction = ScalePrediction(1024, 80)
+        self.first_prediction = ScalePrediction(1024, num_classes)
         self.first_prediction.exit_point_output = (
             None  # 'have to init to access in forward'
         )
         self.first_upsample = nn.Sequential(
             CNNBlock(1024, 512, kernel_size=1, stride=1), nn.Upsample(scale_factor=2)
         )
-        self.second_prediction = ScalePrediction(1024, 80)
+        self.second_prediction = ScalePrediction(1024, num_classes)
         self.second_prediction.exit_point_output = None
         self.second_upsample = nn.Sequential(
             CNNBlock(1024, 256, kernel_size=1, stride=1), nn.Upsample(scale_factor=2)
         )
-        self.third_prediction = ScalePrediction(512, 80)
+        self.third_prediction = ScalePrediction(512, num_classes)
 
     def store_output_for_concat(self, concat_point_id: str) -> Callable:
         def hook(module, input, output):
@@ -145,9 +145,3 @@ class YoloV3(nn.Module):
         )
 
         return y0, y1, y2
-
-
-if __name__ == "__main__":
-    x = torch.rand(1, 3, 416, 416)
-    model = YoloV3()
-    model(x)

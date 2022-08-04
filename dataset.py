@@ -7,8 +7,9 @@ from typing import Callable
 import numpy as np
 import pandas as pd
 import torch
+from cv2 import sort
 from PIL import Image
-from torch.utils.data import Dataset
+from torch.utils.data import DataLoader, Dataset
 from torchvision.ops import box_iou
 
 import config
@@ -72,7 +73,6 @@ class YoloVOCDataset(Dataset):
             # get sorted anchor indices by iou soore
             sorted_anchor_indices = iou_bbox_anchors.argsort(descending=True, dim=1)
             bbox_has_anchor = [False] * 3
-
             for anchor_index in sorted_anchor_indices[0]:
                 grid_index = anchor_index.div(3, rounding_mode="floor")
                 anchor_in_grid = anchor_index % 3

@@ -37,7 +37,7 @@ class YoloV3Loss(nn.Module):
         b_x_y = self.sigmoid(targets[..., 1:3][obj]) + object_cells
         iou = box_iou(torch.cat([b_x_y, b_w_h[obj]], dim=1), targets[..., 1:5][obj])
         obj_loss = self.bce(torch.diag(iou), predictions[..., 0:1][obj].squeeze())
-        return predictions
+        return self.no_obj_weight * no_obj_loss + obj_loss
 
 
 if __name__ == "__main__":
@@ -48,8 +48,31 @@ if __name__ == "__main__":
         transform=config.transform,
     )
     loader = DataLoader(dataset, batch_size=1)
-    loss = YoloV3Loss()
-    model = YoloV3(20)
-    for index, (image, labels) in enumerate(loader):
-        outputs = model(image)
-        loss(outputs[1], labels[1], torch.tensor(config.ANCHORS[0]))
+    loss_fn = YoloV3Loss().to(config.DEVICE)
+    model = YoloV3(20).to(config.DEVICE)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    for epoch in range(500):
+        for index, (image, labels) in enumerate(loader):
+            outputs = model(image.to(config.DEVICE))
+            loss = (
+                loss_fn(
+                    outputs[0].to(config.DEVICE),
+                    labels[0].to(config.DEVICE),
+                    torch.tensor(config.ANCHORS[0]).to(config.DEVICE),
+                )
+                + loss_fn(
+                    outputs[1].to(config.DEVICE),
+                    labels[1].to(config.DEVICE),
+                    torch.tensor(config.ANCHORS[1]).to(config.DEVICE),
+                )
+                + loss_fn(
+                    outputs[2].to(config.DEVICE),
+                    labels[2].to(config.DEVICE),
+                    torch.tensor(config.ANCHORS[2]).to(config.DEVICE),
+                )
+            )
+
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            print(loss.item())

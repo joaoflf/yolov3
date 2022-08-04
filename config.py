@@ -1,7 +1,9 @@
 import albumentations as A
 import cv2
 from albumentations.pytorch import ToTensorV2
+import torch
 
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 DATASET_PATH = "./PASCAL_VOC/"
 IMAGES_PATH = DATASET_PATH + "images/"
 LABELS_PATH = DATASET_PATH + "labels/"

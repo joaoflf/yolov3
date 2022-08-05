@@ -13,6 +13,7 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision.ops import box_iou
 
 import config
+from utils import iou_width_height
 
 
 class YoloVOCDataset(Dataset):
@@ -60,20 +61,17 @@ class YoloVOCDataset(Dataset):
         labels = augmentations["bboxes"]
 
         anchors = torch.tensor(self.anchors).flatten(start_dim=0, end_dim=1)
-        anchors_with_origin = [[0, 0] + anchor.tolist() for anchor in anchors]
 
         for bbox in labels:
             x, y, width, height, class_label = bbox
 
             # calculate height and width iou of bbox with every anchor
             # to determine which anchor shape is more similar to bbox
-            iou_bbox_anchors = box_iou(
-                torch.tensor([[0, 0, width, height]]), torch.tensor(anchors_with_origin)
-            )
+            iou_bbox_anchors = iou_width_height(torch.tensor(bbox[2:4]), anchors)
             # get sorted anchor indices by iou soore
-            sorted_anchor_indices = iou_bbox_anchors.argsort(descending=True, dim=1)
+            sorted_anchor_indices = iou_bbox_anchors.argsort(descending=True)
             bbox_has_anchor = [False] * 3
-            for anchor_index in sorted_anchor_indices[0]:
+            for anchor_index in sorted_anchor_indices:
                 grid_index = anchor_index.div(3, rounding_mode="floor")
                 anchor_in_grid = anchor_index % 3
                 grid_x, grid_y = int(x * self.grid_sizes[grid_index]), int(
@@ -106,7 +104,7 @@ class YoloVOCDataset(Dataset):
 
                 elif (
                     not anchor_is_taken
-                    and iou_bbox_anchors[0][anchor_index] > self.ignore_iou_threshold
+                    and iou_bbox_anchors[anchor_index] > self.ignore_iou_threshold
                 ):
                     targets[grid_index][anchor_in_grid, grid_x, grid_y, 0] = -1
 

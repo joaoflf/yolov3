@@ -8,6 +8,7 @@ from torchvision.ops import box_iou
 import config
 from dataset import YoloVOCDataset
 from model import YoloV3
+from utils import intersection_over_union as iou
 
 
 class YoloV3Loss(nn.Module):
@@ -30,30 +31,42 @@ class YoloV3Loss(nn.Module):
         no_obj_loss = self.bce(predictions[..., 0:1][no_obj], targets[..., 0:1][no_obj])
 
         anchors = anchors[None, :, None, None, :]  # reshape anchors perform operationsj
-        b_w_h = torch.exp(targets[..., 3:5]) * anchors  # as in paper
+        b_w_h = torch.exp(predictions[..., 3:5]) * anchors  # as in paper
 
         # get the indices of the boxes with objects to find the cell numbers
         object_cells = obj.nonzero().squeeze()[..., 2:4]
-        b_x_y = self.sigmoid(targets[..., 1:3][obj]) + object_cells
-        iou = box_iou(torch.cat([b_x_y, b_w_h[obj]], dim=1), targets[..., 1:5][obj])
-        obj_loss = self.bce(torch.diag(iou), predictions[..., 0:1][obj].squeeze())
-        return self.no_obj_weight * no_obj_loss + obj_loss
+        b_x_y = self.sigmoid(predictions[..., 1:3][obj])  # + object_cells
+        iou_scores = iou(
+            torch.cat([b_x_y, b_x_y], dim=1), targets[..., 1:5][obj]
+        ).detach()
+        obj_loss = self.mse(iou_scores, predictions[..., 0:1][obj])
+
+        predictions[..., 1:3] = self.sigmoid(predictions[..., 1:3])
+        targets[..., 3:5] = torch.log(1e-16 + targets[..., 3:5] / anchors)
+        coord_loss = self.mse(predictions[..., 1:5][obj], targets[..., 1:5][obj])
+
+        return (
+            self.no_obj_weight * no_obj_loss + self.coord_weight * coord_loss + obj_loss
+        )
 
 
 if __name__ == "__main__":
+
     dataset = YoloVOCDataset(
         csv_file=config.DATASET_PATH + "1examples.csv",
         image_dir=config.IMAGES_PATH,
         label_dir=config.LABELS_PATH,
-        transform=config.transform,
+        transform=config.test_transform,
     )
     loader = DataLoader(dataset, batch_size=1)
     loss_fn = YoloV3Loss().to(config.DEVICE)
     model = YoloV3(20).to(config.DEVICE)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    for epoch in range(500):
+    epochs = 500
+    for epoch in range(epochs):
         for index, (image, labels) in enumerate(loader):
             outputs = model(image.to(config.DEVICE))
+            # loss = loss_fn(outputs[0], labels[0], torch.tensor(config.ANCHORS[0]))
             loss = (
                 loss_fn(
                     outputs[0].to(config.DEVICE),
@@ -76,3 +89,10 @@ if __name__ == "__main__":
             loss.backward()
             optimizer.step()
             print(loss.item())
+
+            if epoch == epochs - 1:
+                pred_boxes = outputs[0][..., 0] == 1
+                target_boxes = labels[0][..., 0] == 1
+                print(
+                    f"prediction: {outputs[0][...,0][target_boxes]} | target: {labels[0][...,0][target_boxes]}"
+                )

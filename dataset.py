@@ -7,10 +7,8 @@ from typing import Callable
 import numpy as np
 import pandas as pd
 import torch
-from cv2 import sort
 from PIL import Image
 from torch.utils.data import DataLoader, Dataset
-from torchvision.ops import box_iou
 
 import config
 from utils import iou_width_height
@@ -28,7 +26,7 @@ class YoloVOCDataset(Dataset):
         self.image_dir = image_dir
         self.label_dir = label_dir
         self.anchors = config.ANCHORS
-        self.grid_sizes = config.GRID_SIZES
+        self.cell_sizes = config.CELL_SIZES
         self.transform = transform
         self.image_size = config.IMAGE_SIZE
         self.ignore_iou_threshold = 0.5
@@ -52,8 +50,8 @@ class YoloVOCDataset(Dataset):
             axis=1,
         ).tolist()
         targets = [
-            torch.zeros(len(self.grid_sizes), grid_size, grid_size, 6)
-            for grid_size in self.grid_sizes
+            torch.zeros(len(self.cell_sizes), grid_size, grid_size, 6)
+            for grid_size in self.cell_sizes
         ]
 
         augmentations = self.transform(image=image, bboxes=labels)
@@ -74,8 +72,8 @@ class YoloVOCDataset(Dataset):
             for anchor_index in sorted_anchor_indices:
                 grid_index = anchor_index.div(3, rounding_mode="floor")
                 anchor_in_grid = anchor_index % 3
-                grid_x, grid_y = int(x * self.grid_sizes[grid_index]), int(
-                    y * self.grid_sizes[grid_index]
+                grid_x, grid_y = int(x * self.cell_sizes[grid_index]), int(
+                    y * self.cell_sizes[grid_index]
                 )
                 anchor_is_taken = targets[grid_index][anchor_in_grid, grid_x, grid_y, 0]
 
@@ -84,12 +82,12 @@ class YoloVOCDataset(Dataset):
                     targets[grid_index][anchor_in_grid, grid_x, grid_y, 0] = 1
                     # coordinates relative to cell
                     x_to_cell, y_to_cell = (
-                        x * self.grid_sizes[grid_index] - grid_x,
-                        y * self.grid_sizes[grid_index] - grid_y,
+                        x * self.cell_sizes[grid_index] - grid_x,
+                        y * self.cell_sizes[grid_index] - grid_y,
                     )
                     width_to_cell, height_to_cell = (
-                        self.grid_sizes[grid_index] * width,
-                        self.grid_sizes[grid_index] * height,
+                        self.cell_sizes[grid_index] * width,
+                        self.cell_sizes[grid_index] * height,
                     )
 
                     targets[grid_index][

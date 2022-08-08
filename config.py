@@ -1,7 +1,7 @@
 import albumentations as A
 import cv2
-from albumentations.pytorch import ToTensorV2
 import torch
+from albumentations.pytorch import ToTensorV2
 
 DEVICE = "mps" if torch.cuda.is_available() else "cpu"
 DATASET_PATH = "./PASCAL_VOC/"
@@ -13,7 +13,7 @@ ANCHORS = [
     [(0.07, 0.15), (0.15, 0.11), (0.14, 0.29)],
     [(0.02, 0.03), (0.04, 0.07), (0.08, 0.06)],
 ]
-GRID_SIZES = [IMAGE_SIZE // 32, IMAGE_SIZE // 16, IMAGE_SIZE // 8]
+CELL_SIZES = [IMAGE_SIZE // 32, IMAGE_SIZE // 16, IMAGE_SIZE // 8]
 ANCHORS_PER_GRID_SIZE = 3
 IGNORE_IOU_THRESHOLD = 0.5
 
@@ -57,6 +57,16 @@ test_transform = A.Compose(
             max_pixel_value=255,
         ),
         ToTensorV2(),
+    ],
+    bbox_params=A.BboxParams(format="yolo", min_visibility=0.4, label_fields=[]),
+)
+
+display_transform = A.Compose(
+    [
+        A.LongestMaxSize(max_size=IMAGE_SIZE),
+        A.PadIfNeeded(
+            min_height=IMAGE_SIZE, min_width=IMAGE_SIZE, border_mode=cv2.BORDER_CONSTANT
+        ),
     ],
     bbox_params=A.BboxParams(format="yolo", min_visibility=0.4, label_fields=[]),
 )

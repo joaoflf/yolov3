@@ -1,25 +1,96 @@
+from typing import Callable
+
 import torch
+from torch import nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 import config
 from dataset import YoloVOCDataset
-from model import CNNBlock, YoloV3
+from loss import YoloV3Loss
+from model import YoloV3
 
 
-def main():
+class Trainer:
+    def __init__(
+        self,
+        model: nn.Module,
+        dataloader: DataLoader,
+        loss_fn: nn.Module,
+        optimizer: Callable,
+        epochs: int,
+        learning_rate: float,
+    ):
+        self.model = model
+        self.dataloader = dataloader
+        self.loss_fn = loss_fn
+        self.optimizer = optimizer(model.parameters(), learning_rate)
+        self.epochs = epochs
+        self.learning_rate = learning_rate
+        self.scaler = torch.cuda.amp.GradScaler()
+
+    def train(self):
+        looper = tqdm(range(self.epochs))
+        for epoch in looper:
+            for index, (image, labels) in enumerate(self.dataloader):
+                loss = self.train_step(image, labels)
+                looper.set_postfix_str(loss)
+
+    def train_step(self, image: torch.Tensor, labels: torch.Tensor) -> float:
+
+        outputs = model(image.to(config.DEVICE))
+        loss = (
+            self.loss_fn(
+                outputs[0].to(config.DEVICE),
+                labels[0].to(config.DEVICE),
+                torch.tensor(config.ANCHORS[0]).to(config.DEVICE),
+            )
+            + self.loss_fn(
+                outputs[1].to(config.DEVICE),
+                labels[1].to(config.DEVICE),
+                torch.tensor(config.ANCHORS[1]).to(config.DEVICE),
+            )
+            + self.loss_fn(
+                outputs[2].to(config.DEVICE),
+                labels[2].to(config.DEVICE),
+                torch.tensor(config.ANCHORS[2]).to(config.DEVICE),
+            )
+        )
+
+        self.optimizer.zero_grad()
+        self.scaler.scale(loss).backward()
+        self.scaler.step(self.optimizer)
+        self.scaler.update()
+
+        return loss.item()
+
+
+if __name__ == "__main__":
 
     dataset = YoloVOCDataset(
         csv_file=config.DATASET_PATH + "1examples.csv",
         image_dir=config.IMAGES_PATH,
         label_dir=config.LABELS_PATH,
-        transform=config.transform,
+        transform=config.test_transform,
     )
-    loader = DataLoader(dataset, batch_size=1, num_workers=6)
-    model = YoloV3()
-    for index, (image, label) in enumerate(loader):
-        model(image)
+    loader = DataLoader(dataset, batch_size=1)
+    loss_fn = YoloV3Loss().to(config.DEVICE)
+    model = YoloV3(20).to(config.DEVICE)
+    optimizer = torch.optim.Adam
+    epochs = 100
+    lr = 0.001
 
+    trainer = Trainer(model, loader, loss_fn, optimizer, epochs, lr)
+    trainer.train()
 
-if __name__ == "__main__":
-    main()
+    # dataset = YoloVOCDataset(
+    #     csv_file=config.DATASET_PATH + "1examples.csv",
+    #     image_dir=config.IMAGES_PATH,
+    #     label_dir=config.LABELS_PATH,
+    #     transform=config.display_transform,
+    # )
+    # loader = DataLoader(dataset, batch_size=1)
+    # image, labels = next(iter(loader))
+    # model.eval()
+    # predictions = model(image)
+    # plot_predictions(image, labels, predictions)

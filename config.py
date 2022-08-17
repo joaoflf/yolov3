@@ -3,7 +3,7 @@ import cv2
 import torch
 from albumentations.pytorch import ToTensorV2
 
-DEVICE = "mps" if torch.cuda.is_available() else "cpu"
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 DATASET_PATH = "./PASCAL_VOC/"
 IMAGES_PATH = DATASET_PATH + "images/"
 LABELS_PATH = DATASET_PATH + "labels/"

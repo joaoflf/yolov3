@@ -1,5 +1,5 @@
 import torch
-from matplotlib import patches
+from matplotlib import axes, patches
 from matplotlib import pyplot as plt
 from PIL import Image
 
@@ -43,37 +43,40 @@ def intersection_over_union(
 def cell_to_image_coords(
     cell_size: int, cell_coord: torch.Tensor, box_coord: torch.Tensor
 ) -> torch.Tensor:
-
-    print(cell_size, cell_coord, box_coord)
     cell_coord = cell_coord * (config.IMAGE_SIZE / cell_size)
-    x_y = box_coord[0:2] * cell_size + cell_coord
+    x_y = (box_coord[0:2] * cell_size + cell_coord) / config.IMAGE_SIZE
     w_h = box_coord[2:4] / cell_size
-    print(torch.cat([x_y, w_h]))
     return torch.cat([x_y, w_h])
 
 
-def plot_predictions(image, labels: torch.Tensor):  # , predictions: torch.Tensor):
-
-    obj = labels[0][..., 0] == 1
-    object_indexes = obj.nonzero().squeeze()
-    target_boxes = labels[0][..., 1:5][obj]
+def plot_predictions(image, labels: torch.Tensor, predictions: torch.Tensor):
+    labels_obj = labels[0][..., 0] == 1
+    labels_object_indexes = labels_obj.nonzero().squeeze()
+    labels_boxes = labels[0][..., 1:5][labels_obj]
+    pred_obj = labels[0][..., 0] == 1
+    pred_object_indexes = pred_obj.nonzero().squeeze()
+    pred_boxes = labels[0][..., 1:5][pred_obj]
     fig, ax = plt.subplots()
     ax.imshow(image[0])
-    for i, bbox in enumerate(target_boxes):
+    for i, bbox in enumerate(labels_boxes):
         converted_box = cell_to_image_coords(
-            config.CELL_SIZES[object_indexes[i][0]],
-            object_indexes[i][2:5],
+            config.CELL_SIZES[labels_object_indexes[i][0]],
+            labels_object_indexes[i][2:5],
             bbox,
         )
-        x, y, width, height = converted_box
-        rect = patches.Rectangle(
-            (x - width * config.IMAGE_SIZE / 2, y - height * config.IMAGE_SIZE / 2),
-            width * config.IMAGE_SIZE,
-            height * config.IMAGE_SIZE,
-            linewidth=1,
-            edgecolor="r",
-            facecolor="none",
-        )
-        ax.add_patch(rect)
+        rect = draw_box(converted_box, ax, "r")
 
     plt.show()
+
+
+def draw_box(coords: torch.Tensor, axes: axes.Axes, color: str):
+    x, y, width, height = coords
+    rect = patches.Rectangle(
+        ((x - width / 2) * config.IMAGE_SIZE, (y - height / 2) * config.IMAGE_SIZE),
+        width * config.IMAGE_SIZE,
+        height * config.IMAGE_SIZE,
+        linewidth=1,
+        edgecolor=color,
+        facecolor="none",
+    )
+    axes.add_patch(rect)

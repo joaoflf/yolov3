@@ -20,6 +20,7 @@ class Trainer:
         optimizer: Callable,
         epochs: int,
         learning_rate: float,
+        checkpoint_path: str,
     ):
         self.model = model
         self.dataloader = dataloader
@@ -27,6 +28,7 @@ class Trainer:
         self.optimizer = optimizer(model.parameters(), learning_rate)
         self.epochs = epochs
         self.learning_rate = learning_rate
+        self.checkpoint_path = checkpoint_path
         self.scaler = torch.cuda.amp.GradScaler()
 
     def train(self):
@@ -35,6 +37,8 @@ class Trainer:
             for index, (image, labels) in enumerate(self.dataloader):
                 loss = self.train_step(image, labels)
                 looper.set_postfix_str(loss)
+                if epoch == self.epochs - 1:
+                    self.save_checkpoint(epoch + 1, loss)
 
     def train_step(self, image: torch.Tensor, labels: torch.Tensor) -> float:
 
@@ -64,6 +68,25 @@ class Trainer:
 
         return loss.item()
 
+    def save_checkpoint(self, epoch, loss):
+        torch.save(
+            {
+                "epoch": epoch,
+                "model_state_dict": self.model.state_dict(),
+                "optimizer_state_dict": self.optimizer.state_dict(),
+                "loss": loss,
+            },
+            self.checkpoint_path,
+        )
+
+    def load_checkpoint(self, checkpoint_path):
+        checkpoint = torch.load(checkpoint_path)
+        self.model.load_state_dict(checkpoint["model_state_dict"])
+        self.optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+        print(
+            f"Loaded checkpoint trained on {checkpoint['epoch']} epochs with a loss of {checkpoint['loss']}"
+        )
+
 
 if __name__ == "__main__":
 
@@ -79,9 +102,11 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam
     epochs = 100
     lr = 0.001
+    checkpoint_path = config.CHECKPOINT_PATH
 
-    trainer = Trainer(model, loader, loss_fn, optimizer, epochs, lr)
-    trainer.train()
+    trainer = Trainer(model, loader, loss_fn, optimizer, epochs, lr, checkpoint_path)
+    trainer.load_checkpoint(checkpoint_path)
+    # trainer.train()
 
     # dataset = YoloVOCDataset(
     #     csv_file=config.DATASET_PATH + "1examples.csv",

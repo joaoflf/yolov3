@@ -7,6 +7,7 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 DATASET_PATH = "./PASCAL_VOC/"
 IMAGES_PATH = DATASET_PATH + "images/"
 LABELS_PATH = DATASET_PATH + "labels/"
+CHECKPOINT_PATH = "./checkpoints/yolo.pt"
 IMAGE_SIZE = 416
 ANCHORS = [
     [(0.28, 0.22), (0.38, 0.48), (0.9, 0.78)],

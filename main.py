@@ -115,7 +115,9 @@ if __name__ == "__main__":
     batch_size = 1
     checkpoint_path = config.CHECKPOINT_PATH
 
-    trainer = Trainer(model, loader, loss_fn, optimizer, epochs, lr)
+    trainer = Trainer(
+        model, loader, loss_fn, optimizer, epochs, lr, batch_size, checkpoint_path
+    )
     trainer.train()
 
     dataset = YoloVOCDataset(

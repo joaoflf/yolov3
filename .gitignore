@@ -1,4 +1,5 @@
 PASCAL_VOC/
+checkpoints/
 .pytest_cache/
 .ipynb_checkpoints/
 .vscode/

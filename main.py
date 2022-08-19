@@ -1,14 +1,17 @@
 from typing import Callable
 
+import albumentations as A
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 import config
+import wandb
 from dataset import YoloVOCDataset
 from loss import YoloV3Loss
 from model import YoloV3
+from utils import plot_predictions
 
 
 class Trainer:
@@ -20,6 +23,7 @@ class Trainer:
         optimizer: Callable,
         epochs: int,
         learning_rate: float,
+        batch_size: int,
     ):
         self.model = model
         self.dataloader = dataloader
@@ -28,16 +32,22 @@ class Trainer:
         self.epochs = epochs
         self.learning_rate = learning_rate
         self.scaler = torch.cuda.amp.GradScaler()
+        wandb.config = {
+            "learning_rate": learning_rate,
+            "epochs": epochs,
+            "batch_size": batch_size,
+        }
 
     def train(self):
+        wandb.init(project="yolov3")
         looper = tqdm(range(self.epochs))
         for epoch in looper:
             for index, (image, labels) in enumerate(self.dataloader):
                 loss = self.train_step(image, labels)
                 looper.set_postfix_str(loss)
+                wandb.log({"loss": loss})
 
     def train_step(self, image: torch.Tensor, labels: torch.Tensor) -> float:
-
         outputs = model(image.to(config.DEVICE))
         loss = (
             self.loss_fn(
@@ -77,20 +87,24 @@ if __name__ == "__main__":
     loss_fn = YoloV3Loss().to(config.DEVICE)
     model = YoloV3(20).to(config.DEVICE)
     optimizer = torch.optim.Adam
-    epochs = 100
+    epochs = 1000
     lr = 0.001
+    batch_size = 1
 
-    trainer = Trainer(model, loader, loss_fn, optimizer, epochs, lr)
+    trainer = Trainer(model, loader, loss_fn, optimizer, epochs, lr, batch_size)
     trainer.train()
 
-    # dataset = YoloVOCDataset(
-    #     csv_file=config.DATASET_PATH + "1examples.csv",
-    #     image_dir=config.IMAGES_PATH,
-    #     label_dir=config.LABELS_PATH,
-    #     transform=config.display_transform,
-    # )
-    # loader = DataLoader(dataset, batch_size=1)
-    # image, labels = next(iter(loader))
+    dataset = YoloVOCDataset(
+        csv_file=config.DATASET_PATH + "1examples.csv",
+        image_dir=config.IMAGES_PATH,
+        label_dir=config.LABELS_PATH,
+        transform=config.display_transform,
+    )
+    loader = DataLoader(dataset, batch_size=1)
+    image, labels = next(iter(loader))
+
+    # plot_predictions(image[0], labels, labels)
+
     # model.eval()
     # predictions = model(image)
     # plot_predictions(image, labels, predictions)

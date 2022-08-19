@@ -1,0 +1,41 @@
+2022-08-19 09:26:22,606 INFO    StreamThr :194442 [internal.py:wandb_internal():90] W&B internal server running at pid: 194442, started at: 2022-08-19 09:26:22.605714
+2022-08-19 09:26:22,611 DEBUG   HandlerThread:194442 [handler.py:handle_request():141] handle_request: status
+2022-08-19 09:26:22,613 DEBUG   SenderThread:194442 [sender.py:send_request():316] send_request: status
+2022-08-19 09:26:22,617 DEBUG   SenderThread:194442 [sender.py:send():302] send: header
+2022-08-19 09:26:22,617 INFO    WriterThread:194442 [datastore.py:open_for_write():75] open: /home/bridge/playground/yolov3/wandb/run-20220819_092622-1cxz3sb1/run-1cxz3sb1.wandb
+2022-08-19 09:26:22,617 DEBUG   SenderThread:194442 [sender.py:send():302] send: run
+2022-08-19 09:26:23,133 DEBUG   HandlerThread:194442 [handler.py:handle_request():141] handle_request: check_version
+2022-08-19 09:26:23,141 INFO    SenderThread:194442 [dir_watcher.py:__init__():216] watching files in: /home/bridge/playground/yolov3/wandb/run-20220819_092622-1cxz3sb1/files
+2022-08-19 09:26:23,141 INFO    SenderThread:194442 [sender.py:_start_run_threads():913] run started: 1cxz3sb1 with start time 1660897582.601647
+2022-08-19 09:26:23,142 DEBUG   SenderThread:194442 [sender.py:send():302] send: summary
+2022-08-19 09:26:23,142 INFO    SenderThread:194442 [sender.py:_save_file():1156] saving file wandb-summary.json with policy end
+2022-08-19 09:26:23,143 DEBUG   SenderThread:194442 [sender.py:send_request():316] send_request: check_version
+2022-08-19 09:26:23,227 DEBUG   HandlerThread:194442 [handler.py:handle_request():141] handle_request: run_start
+2022-08-19 09:26:23,235 DEBUG   HandlerThread:194442 [meta.py:__init__():35] meta init
+2022-08-19 09:26:23,235 DEBUG   HandlerThread:194442 [meta.py:__init__():50] meta init done
+2022-08-19 09:26:23,235 DEBUG   HandlerThread:194442 [meta.py:probe():216] probe
+2022-08-19 09:26:23,242 DEBUG   HandlerThread:194442 [meta.py:_setup_git():206] setup git
+2022-08-19 09:26:23,251 DEBUG   HandlerThread:194442 [meta.py:_setup_git():213] setup git done
+2022-08-19 09:26:23,251 DEBUG   HandlerThread:194442 [meta.py:_save_pip():54] save pip
+2022-08-19 09:26:23,252 DEBUG   HandlerThread:194442 [meta.py:_save_pip():68] save pip done
+2022-08-19 09:26:23,252 DEBUG   HandlerThread:194442 [meta.py:probe():254] probe done
+2022-08-19 09:26:23,256 DEBUG   SenderThread:194442 [sender.py:send():302] send: files
+2022-08-19 09:26:23,256 INFO    SenderThread:194442 [sender.py:_save_file():1156] saving file wandb-metadata.json with policy now
+2022-08-19 09:26:23,274 DEBUG   HandlerThread:194442 [handler.py:handle_request():141] handle_request: stop_status
+2022-08-19 09:26:23,275 DEBUG   SenderThread:194442 [sender.py:send_request():316] send_request: stop_status
+2022-08-19 09:26:23,489 DEBUG   SenderThread:194442 [sender.py:send():302] send: telemetry
+2022-08-19 09:26:24,145 INFO    Thread-18 :194442 [dir_watcher.py:_on_file_created():275] file/dir created: /home/bridge/playground/yolov3/wandb/run-20220819_092622-1cxz3sb1/files/requirements.txt
+2022-08-19 09:26:24,146 INFO    Thread-18 :194442 [dir_watcher.py:_on_file_created():275] file/dir created: /home/bridge/playground/yolov3/wandb/run-20220819_092622-1cxz3sb1/files/wandb-metadata.json
+2022-08-19 09:26:24,146 INFO    Thread-18 :194442 [dir_watcher.py:_on_file_created():275] file/dir created: /home/bridge/playground/yolov3/wandb/run-20220819_092622-1cxz3sb1/files/wandb-summary.json
+2022-08-19 09:26:24,146 INFO    Thread-18 :194442 [dir_watcher.py:_on_file_created():275] file/dir created: /home/bridge/playground/yolov3/wandb/run-20220819_092622-1cxz3sb1/files/output.log
+2022-08-19 09:26:24,255 INFO    Thread-22 :194442 [upload_job.py:push():138] Uploaded file /tmp/tmp6_p5kq2rwandb/ot77jwh2-wandb-metadata.json
+2022-08-19 09:26:26,144 INFO    Thread-18 :194442 [dir_watcher.py:_on_file_modified():292] file/dir modified: /home/bridge/playground/yolov3/wandb/run-20220819_092622-1cxz3sb1/files/output.log
+2022-08-19 09:26:38,495 DEBUG   HandlerThread:194442 [handler.py:handle_request():141] handle_request: stop_status
+2022-08-19 09:26:38,496 DEBUG   SenderThread:194442 [sender.py:send_request():316] send_request: stop_status
+2022-08-19 09:26:51,672 DEBUG   SenderThread:194442 [sender.py:send():302] send: stats
+2022-08-19 09:26:53,169 INFO    Thread-18 :194442 [dir_watcher.py:_on_file_modified():292] file/dir modified: /home/bridge/playground/yolov3/wandb/run-20220819_092622-1cxz3sb1/files/config.yaml
+2022-08-19 09:26:53,719 DEBUG   HandlerThread:194442 [handler.py:handle_request():141] handle_request: stop_status
+2022-08-19 09:26:53,720 DEBUG   SenderThread:194442 [sender.py:send_request():316] send_request: stop_status
+2022-08-19 09:27:08,938 DEBUG   HandlerThread:194442 [handler.py:handle_request():141] handle_request: stop_status
+2022-08-19 09:27:08,939 DEBUG   SenderThread:194442 [sender.py:send_request():316] send_request: stop_status
+2022-08-19 09:27:22,051 DEBUG   SenderThread:194442 [sender.py:send():302] send: stats

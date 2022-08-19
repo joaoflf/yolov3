@@ -1,0 +1,15 @@
+  0%|                                                                                         | 0/100 [00:00<?, ?it/s, 153.9057159423828]
+Traceback (most recent call last):
+  File "/home/bridge/playground/yolov3/main.py", line 93, in <module>
+    trainer.train()
+  File "/home/bridge/playground/yolov3/main.py", line 46, in train
+    wandb.log(loss)
+  File "/home/bridge/.cache/pypoetry/virtualenvs/yolov3-OxUxvmUT-py3.10/lib/python3.10/site-packages/wandb/sdk/wandb_run.py", line 289, in wrapper
+    return func(self, *args, **kwargs)
+  File "/home/bridge/.cache/pypoetry/virtualenvs/yolov3-OxUxvmUT-py3.10/lib/python3.10/site-packages/wandb/sdk/wandb_run.py", line 255, in wrapper
+    return func(self, *args, **kwargs)
+  File "/home/bridge/.cache/pypoetry/virtualenvs/yolov3-OxUxvmUT-py3.10/lib/python3.10/site-packages/wandb/sdk/wandb_run.py", line 1591, in log
+    self._log(data=data, step=step, commit=commit)
+  File "/home/bridge/.cache/pypoetry/virtualenvs/yolov3-OxUxvmUT-py3.10/lib/python3.10/site-packages/wandb/sdk/wandb_run.py", line 1370, in _log
+    raise ValueError("wandb.log must be passed a dictionary")
+ValueError: wandb.log must be passed a dictionary

@@ -1,0 +1,153 @@
+2022-08-19 09:28:05,706 INFO    StreamThr :194946 [internal.py:wandb_internal():90] W&B internal server running at pid: 194946, started at: 2022-08-19 09:28:05.706144
+2022-08-19 09:28:05,711 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: status
+2022-08-19 09:28:05,713 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: status
+2022-08-19 09:28:05,716 INFO    WriterThread:194946 [datastore.py:open_for_write():75] open: /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/run-2gqcm8xl.wandb
+2022-08-19 09:28:05,717 DEBUG   SenderThread:194946 [sender.py:send():302] send: header
+2022-08-19 09:28:05,718 DEBUG   SenderThread:194946 [sender.py:send():302] send: run
+2022-08-19 09:28:06,216 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: check_version
+2022-08-19 09:28:06,226 INFO    SenderThread:194946 [dir_watcher.py:__init__():216] watching files in: /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/files
+2022-08-19 09:28:06,227 INFO    SenderThread:194946 [sender.py:_start_run_threads():913] run started: 2gqcm8xl with start time 1660897685.700192
+2022-08-19 09:28:06,227 DEBUG   SenderThread:194946 [sender.py:send():302] send: summary
+2022-08-19 09:28:06,227 INFO    SenderThread:194946 [sender.py:_save_file():1156] saving file wandb-summary.json with policy end
+2022-08-19 09:28:06,228 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: check_version
+2022-08-19 09:28:06,321 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: run_start
+2022-08-19 09:28:06,328 DEBUG   HandlerThread:194946 [meta.py:__init__():35] meta init
+2022-08-19 09:28:06,328 DEBUG   HandlerThread:194946 [meta.py:__init__():50] meta init done
+2022-08-19 09:28:06,328 DEBUG   HandlerThread:194946 [meta.py:probe():216] probe
+2022-08-19 09:28:06,335 DEBUG   HandlerThread:194946 [meta.py:_setup_git():206] setup git
+2022-08-19 09:28:06,346 DEBUG   HandlerThread:194946 [meta.py:_setup_git():213] setup git done
+2022-08-19 09:28:06,346 DEBUG   HandlerThread:194946 [meta.py:_save_pip():54] save pip
+2022-08-19 09:28:06,347 DEBUG   HandlerThread:194946 [meta.py:_save_pip():68] save pip done
+2022-08-19 09:28:06,347 DEBUG   HandlerThread:194946 [meta.py:probe():254] probe done
+2022-08-19 09:28:06,356 DEBUG   SenderThread:194946 [sender.py:send():302] send: files
+2022-08-19 09:28:06,356 INFO    SenderThread:194946 [sender.py:_save_file():1156] saving file wandb-metadata.json with policy now
+2022-08-19 09:28:06,371 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: stop_status
+2022-08-19 09:28:06,371 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: stop_status
+2022-08-19 09:28:06,574 DEBUG   SenderThread:194946 [sender.py:send():302] send: telemetry
+2022-08-19 09:28:07,232 INFO    Thread-18 :194946 [dir_watcher.py:_on_file_created():275] file/dir created: /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/files/requirements.txt
+2022-08-19 09:28:07,233 INFO    Thread-18 :194946 [dir_watcher.py:_on_file_created():275] file/dir created: /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/files/wandb-metadata.json
+2022-08-19 09:28:07,233 INFO    Thread-18 :194946 [dir_watcher.py:_on_file_created():275] file/dir created: /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/files/output.log
+2022-08-19 09:28:07,233 INFO    Thread-18 :194946 [dir_watcher.py:_on_file_created():275] file/dir created: /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/files/wandb-summary.json
+2022-08-19 09:28:07,341 INFO    Thread-22 :194946 [upload_job.py:push():138] Uploaded file /tmp/tmpp92b0v1_wandb/3tn7p9s8-wandb-metadata.json
+2022-08-19 09:28:09,229 INFO    Thread-18 :194946 [dir_watcher.py:_on_file_modified():292] file/dir modified: /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/files/output.log
+2022-08-19 09:28:21,593 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: stop_status
+2022-08-19 09:28:21,594 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: stop_status
+2022-08-19 09:28:34,903 DEBUG   SenderThread:194946 [sender.py:send():302] send: stats
+2022-08-19 09:28:36,256 INFO    Thread-18 :194946 [dir_watcher.py:_on_file_modified():292] file/dir modified: /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/files/config.yaml
+2022-08-19 09:28:36,848 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: stop_status
+2022-08-19 09:28:36,849 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: stop_status
+2022-08-19 09:28:52,108 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: stop_status
+2022-08-19 09:28:52,108 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: stop_status
+2022-08-19 09:29:04,957 DEBUG   SenderThread:194946 [sender.py:send():302] send: exit
+2022-08-19 09:29:04,958 INFO    SenderThread:194946 [sender.py:send_exit():438] handling exit code: 0
+2022-08-19 09:29:04,959 INFO    SenderThread:194946 [sender.py:send_exit():440] handling runtime: 58
+2022-08-19 09:29:04,981 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:04,983 INFO    SenderThread:194946 [sender.py:_save_file():1156] saving file wandb-summary.json with policy end
+2022-08-19 09:29:04,984 INFO    SenderThread:194946 [sender.py:send_exit():446] send defer
+2022-08-19 09:29:04,985 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:04,986 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: defer
+2022-08-19 09:29:04,989 INFO    HandlerThread:194946 [handler.py:handle_request_defer():164] handle defer: 0
+2022-08-19 09:29:04,990 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: defer
+2022-08-19 09:29:04,990 INFO    SenderThread:194946 [sender.py:send_request_defer():455] handle sender defer: 0
+2022-08-19 09:29:04,991 INFO    SenderThread:194946 [sender.py:transition_state():459] send defer: 1
+2022-08-19 09:29:04,993 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: defer
+2022-08-19 09:29:04,993 INFO    HandlerThread:194946 [handler.py:handle_request_defer():164] handle defer: 1
+2022-08-19 09:29:05,090 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: defer
+2022-08-19 09:29:05,090 INFO    SenderThread:194946 [sender.py:send_request_defer():455] handle sender defer: 1
+2022-08-19 09:29:05,090 INFO    SenderThread:194946 [sender.py:transition_state():459] send defer: 2
+2022-08-19 09:29:05,090 DEBUG   SenderThread:194946 [sender.py:send():302] send: stats
+2022-08-19 09:29:05,091 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: defer
+2022-08-19 09:29:05,091 INFO    HandlerThread:194946 [handler.py:handle_request_defer():164] handle defer: 2
+2022-08-19 09:29:05,091 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: defer
+2022-08-19 09:29:05,091 INFO    SenderThread:194946 [sender.py:send_request_defer():455] handle sender defer: 2
+2022-08-19 09:29:05,091 INFO    SenderThread:194946 [sender.py:transition_state():459] send defer: 3
+2022-08-19 09:29:05,092 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: defer
+2022-08-19 09:29:05,092 INFO    HandlerThread:194946 [handler.py:handle_request_defer():164] handle defer: 3
+2022-08-19 09:29:05,092 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: defer
+2022-08-19 09:29:05,092 INFO    SenderThread:194946 [sender.py:send_request_defer():455] handle sender defer: 3
+2022-08-19 09:29:05,092 INFO    SenderThread:194946 [sender.py:transition_state():459] send defer: 4
+2022-08-19 09:29:05,092 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: defer
+2022-08-19 09:29:05,092 INFO    HandlerThread:194946 [handler.py:handle_request_defer():164] handle defer: 4
+2022-08-19 09:29:05,093 DEBUG   SenderThread:194946 [sender.py:send():302] send: summary
+2022-08-19 09:29:05,093 INFO    SenderThread:194946 [sender.py:_save_file():1156] saving file wandb-summary.json with policy end
+2022-08-19 09:29:05,093 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: defer
+2022-08-19 09:29:05,093 INFO    SenderThread:194946 [sender.py:send_request_defer():455] handle sender defer: 4
+2022-08-19 09:29:05,093 INFO    SenderThread:194946 [sender.py:transition_state():459] send defer: 5
+2022-08-19 09:29:05,094 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: defer
+2022-08-19 09:29:05,094 INFO    HandlerThread:194946 [handler.py:handle_request_defer():164] handle defer: 5
+2022-08-19 09:29:05,094 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: defer
+2022-08-19 09:29:05,094 INFO    SenderThread:194946 [sender.py:send_request_defer():455] handle sender defer: 5
+2022-08-19 09:29:05,094 INFO    SenderThread:194946 [sender.py:transition_state():459] send defer: 6
+2022-08-19 09:29:05,094 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: defer
+2022-08-19 09:29:05,094 INFO    HandlerThread:194946 [handler.py:handle_request_defer():164] handle defer: 6
+2022-08-19 09:29:05,095 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: defer
+2022-08-19 09:29:05,095 INFO    SenderThread:194946 [sender.py:send_request_defer():455] handle sender defer: 6
+2022-08-19 09:29:05,095 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:05,281 INFO    Thread-18 :194946 [dir_watcher.py:_on_file_modified():292] file/dir modified: /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/files/wandb-summary.json
+2022-08-19 09:29:06,757 INFO    SenderThread:194946 [sender.py:transition_state():459] send defer: 7
+2022-08-19 09:29:06,758 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:06,760 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: defer
+2022-08-19 09:29:06,761 INFO    HandlerThread:194946 [handler.py:handle_request_defer():164] handle defer: 7
+2022-08-19 09:29:06,762 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: defer
+2022-08-19 09:29:06,763 INFO    SenderThread:194946 [sender.py:send_request_defer():455] handle sender defer: 7
+2022-08-19 09:29:06,764 INFO    SenderThread:194946 [dir_watcher.py:finish():362] shutting down directory watcher
+2022-08-19 09:29:06,866 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:07,283 INFO    Thread-18 :194946 [dir_watcher.py:_on_file_modified():292] file/dir modified: /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/files/output.log
+2022-08-19 09:29:07,288 INFO    SenderThread:194946 [dir_watcher.py:finish():392] scan: /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/files
+2022-08-19 09:29:07,289 INFO    SenderThread:194946 [dir_watcher.py:finish():406] scan save: /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/files/output.log output.log
+2022-08-19 09:29:07,290 INFO    SenderThread:194946 [dir_watcher.py:finish():406] scan save: /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/files/config.yaml config.yaml
+2022-08-19 09:29:07,291 INFO    SenderThread:194946 [dir_watcher.py:finish():406] scan save: /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/files/requirements.txt requirements.txt
+2022-08-19 09:29:07,292 INFO    SenderThread:194946 [dir_watcher.py:finish():406] scan save: /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/files/wandb-metadata.json wandb-metadata.json
+2022-08-19 09:29:07,294 INFO    SenderThread:194946 [dir_watcher.py:finish():406] scan save: /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/files/wandb-summary.json wandb-summary.json
+2022-08-19 09:29:07,295 INFO    SenderThread:194946 [sender.py:transition_state():459] send defer: 8
+2022-08-19 09:29:07,295 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:07,299 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: defer
+2022-08-19 09:29:07,299 INFO    HandlerThread:194946 [handler.py:handle_request_defer():164] handle defer: 8
+2022-08-19 09:29:07,332 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: defer
+2022-08-19 09:29:07,333 INFO    SenderThread:194946 [sender.py:send_request_defer():455] handle sender defer: 8
+2022-08-19 09:29:07,333 INFO    SenderThread:194946 [file_pusher.py:finish():171] shutting down file pusher
+2022-08-19 09:29:07,412 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:07,412 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:07,514 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:07,514 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:07,647 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:07,653 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:07,758 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:07,759 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:07,864 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:07,865 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:07,970 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:07,971 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:08,075 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:08,075 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:08,086 INFO    Thread-24 :194946 [upload_job.py:push():138] Uploaded file /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/files/config.yaml
+2022-08-19 09:29:08,156 INFO    Thread-25 :194946 [upload_job.py:push():138] Uploaded file /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/files/requirements.txt
+2022-08-19 09:29:08,177 INFO    Thread-23 :194946 [upload_job.py:push():138] Uploaded file /home/bridge/playground/yolov3/wandb/run-20220819_092805-2gqcm8xl/files/output.log
+2022-08-19 09:29:08,178 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:08,178 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:08,280 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:08,280 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:08,382 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:08,383 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:08,488 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:08,489 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:08,593 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:08,594 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:08,698 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:08,699 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:08,802 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:08,803 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:08,907 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:08,908 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:09,012 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:09,013 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:09,117 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:09,118 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:09,222 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:09,222 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:09,324 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:09,325 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:09,430 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:09,431 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit
+2022-08-19 09:29:09,534 DEBUG   HandlerThread:194946 [handler.py:handle_request():141] handle_request: poll_exit
+2022-08-19 09:29:09,534 DEBUG   SenderThread:194946 [sender.py:send_request():316] send_request: poll_exit

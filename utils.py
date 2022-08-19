@@ -2,6 +2,7 @@ import torch
 from matplotlib import axes, patches
 from matplotlib import pyplot as plt
 from PIL import Image
+from torchvision.ops import nms
 
 import config
 
@@ -50,31 +51,51 @@ def cell_to_image_coords(
 
 
 def plot_predictions(image, labels: torch.Tensor, predictions: torch.Tensor):
-    labels_obj = labels[0][..., 0] == 1
-    labels_object_indexes = labels_obj.nonzero().squeeze()
-    labels_boxes = labels[0][..., 1:5][labels_obj]
-    pred_obj = labels[0][..., 0] == 1
-    pred_object_indexes = pred_obj.nonzero().squeeze()
-    pred_boxes = labels[0][..., 1:5][pred_obj]
     fig, ax = plt.subplots()
-    ax.imshow(image[0])
-    for i, bbox in enumerate(labels_boxes):
-        converted_box = cell_to_image_coords(
-            config.CELL_SIZES[labels_object_indexes[i][0]],
-            labels_object_indexes[i][2:5],
-            bbox,
-        )
-        rect = draw_box(converted_box, ax, "r")
+    ax.imshow(image.permute(1, 2, 0))
+    labels_obj = labels[0][..., 0] == 1
+    object_classes = labels[0][..., 5][labels_obj].unique()
+    boxes_by_class = {int(class_id): [] for class_id in object_classes}
+    for scale in range(3):
+        for object_class in object_classes:
+            class_boxes_loc = labels[scale][..., 5] == object_class
+            class_boxes_indices = class_boxes_loc.nonzero()
+            boxes_by_class[int(object_class)] += [
+                cell_to_image_coords(
+                    config.CELL_SIZES[scale], class_boxes_indices[i][2:5], box
+                )
+                for i, box in enumerate(labels[scale][..., 1:5][class_boxes_loc])
+            ]
+
+    # supressed_boxes = nms(
+    #     [center_to_edge_coords(box) for box in boxes_by_class[12]],
+    # )
+    #     rect = draw_box(converted_box, ax, "r", image.shape[1], image.shape[2])
 
     plt.show()
 
 
-def draw_box(coords: torch.Tensor, axes: axes.Axes, color: str):
+def center_to_edge_coords(coords: list):
+    return [
+        coords[0] - coords[2] / 2,
+        coords[1] - coords[3] / 2,
+        coords[0] + coords[2],
+        coords[1] + coords[3],
+    ]
+
+
+def draw_box(
+    coords: torch.Tensor,
+    axes: axes.Axes,
+    color: str,
+    image_width: float,
+    image_height: float,
+):
     x, y, width, height = coords
     rect = patches.Rectangle(
-        ((x - width / 2) * config.IMAGE_SIZE, (y - height / 2) * config.IMAGE_SIZE),
-        width * config.IMAGE_SIZE,
-        height * config.IMAGE_SIZE,
+        ((x - width / 2) * image_width, (y - height / 2) * image_height),
+        width * image_width,
+        height * image_height,
         linewidth=1,
         edgecolor=color,
         facecolor="none",

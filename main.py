@@ -110,7 +110,7 @@ if __name__ == "__main__":
     loss_fn = YoloV3Loss().to(config.DEVICE)
     model = YoloV3(20).to(config.DEVICE)
     optimizer = torch.optim.Adam
-    epochs = 1000
+    epochs = 500
     lr = 0.001
     batch_size = 1
     checkpoint_path = config.CHECKPOINT_PATH
@@ -118,8 +118,8 @@ if __name__ == "__main__":
     trainer = Trainer(
         model, loader, loss_fn, optimizer, epochs, lr, batch_size, checkpoint_path
     )
-    trainer.train()
-
+    # trainer.train()
+    trainer.load_checkpoint(checkpoint_path)
     dataset = YoloVOCDataset(
         csv_file=config.DATASET_PATH + "1examples.csv",
         image_dir=config.IMAGES_PATH,
@@ -131,6 +131,6 @@ if __name__ == "__main__":
 
     # plot_predictions(image[0], labels, labels)
 
-    # model.eval()
-    # predictions = model(image)
-    # plot_predictions(image, labels, predictions)
+    model.eval()
+    predictions = model(image)
+    plot_predictions(image, predictions)

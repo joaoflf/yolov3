@@ -50,27 +50,28 @@ def cell_to_image_coords(
     return torch.cat([x_y, w_h])
 
 
-def plot_predictions(image, labels: torch.Tensor, predictions: torch.Tensor):
+def plot_predictions(image, predictions: torch.Tensor):
     fig, ax = plt.subplots()
     ax.imshow(image.permute(1, 2, 0))
-    labels_obj = labels[0][..., 0] == 1
-    object_classes = labels[0][..., 5][labels_obj].unique()
+    labels_obj = predictions[0][..., 0] == 1
+    object_classes = predictions[0][..., 5][labels_obj].unique()
     boxes_by_class = {int(class_id): [] for class_id in object_classes}
     for scale in range(3):
         for object_class in object_classes:
-            class_boxes_loc = labels[scale][..., 5] == object_class
+            class_boxes_loc = predictions[scale][..., 5] == object_class
             class_boxes_indices = class_boxes_loc.nonzero()
             boxes_by_class[int(object_class)] += [
                 cell_to_image_coords(
                     config.CELL_SIZES[scale], class_boxes_indices[i][2:5], box
                 )
-                for i, box in enumerate(labels[scale][..., 1:5][class_boxes_loc])
+                for i, box in enumerate(predictions[scale][..., 1:5][class_boxes_loc])
             ]
 
     # supressed_boxes = nms(
     #     [center_to_edge_coords(box) for box in boxes_by_class[12]],
     # )
-    #     rect = draw_box(converted_box, ax, "r", image.shape[1], image.shape[2])
+    for box in boxes_by_class[12]:
+        draw_box1(box, ax, "r", image.shape[1], image.shape[2])
 
     plt.show()
 
@@ -82,6 +83,25 @@ def center_to_edge_coords(coords: list):
         coords[0] + coords[2],
         coords[1] + coords[3],
     ]
+
+
+def draw_box1(
+    coords: torch.Tensor,
+    axes: axes.Axes,
+    color: str,
+    image_width: float,
+    image_height: float,
+):
+    x, y, width, height = coords
+    rect = patches.Rectangle(
+        (x * image_width, y * image_height),
+        width - x * image_width,
+        height - y * image_height,
+        linewidth=1,
+        edgecolor=color,
+        facecolor="none",
+    )
+    axes.add_patch(rect)
 
 
 def draw_box(

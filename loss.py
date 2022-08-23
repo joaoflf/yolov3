@@ -44,7 +44,9 @@ class YoloV3Loss(nn.Module):
         targets[..., 3:5] = torch.log(1e-16 + targets[..., 3:5] / anchors)
         coord_loss = self.mse(predictions[..., 1:5][obj], targets[..., 1:5][obj])
 
-        class_loss = self.cross_entropy(predictions[..., 5][obj], targets[..., 5][obj])
+        class_loss = self.cross_entropy(
+            predictions[..., 5:][obj], targets[..., 5][obj].long()
+        )
 
         return (
             self.no_obj_weight * no_obj_loss

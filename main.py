@@ -46,7 +46,7 @@ class Trainer:
         for epoch in looper:
             for index, (image, labels) in enumerate(self.dataloader):
                 loss = self.train_step(image, labels)
-                looper.set_postfix_str(loss)
+                looper.set_postfix_str(str(loss))
                 wandb.log({"loss": loss})
                 if epoch == self.epochs - 1:
                     self.save_checkpoint(epoch + 1, loss)
@@ -120,17 +120,8 @@ if __name__ == "__main__":
     )
     # trainer.train()
     trainer.load_checkpoint(checkpoint_path)
-    dataset = YoloVOCDataset(
-        csv_file=config.DATASET_PATH + "1examples.csv",
-        image_dir=config.IMAGES_PATH,
-        label_dir=config.LABELS_PATH,
-        transform=config.display_transform,
-    )
-    loader = DataLoader(dataset, batch_size=1)
     image, labels = next(iter(loader))
 
-    # plot_predictions(image[0], labels, labels)
-
     model.eval()
-    predictions = model(image)
-    plot_predictions(image, predictions)
+    predictions = model(image.to(config.DEVICE))
+    plot_predictions(image[0], predictions)

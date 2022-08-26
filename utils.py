@@ -53,7 +53,7 @@ def cell_to_image_coords(
 def plot_predictions(image, predictions: torch.Tensor):
     fig, ax = plt.subplots()
     ax.imshow(image.permute(1, 2, 0))
-    labels_obj = predictions[0][..., 0] == 1
+    labels_obj = predictions[0][..., 0] > 0.6
     object_classes = predictions[0][..., 5][labels_obj].unique()
     boxes_by_class = {int(class_id): [] for class_id in object_classes}
     for scale in range(3):

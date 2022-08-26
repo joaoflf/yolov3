@@ -110,7 +110,7 @@ if __name__ == "__main__":
     loss_fn = YoloV3Loss().to(config.DEVICE)
     model = YoloV3(20).to(config.DEVICE)
     optimizer = torch.optim.Adam
-    epochs = 500
+    epochs = 5000
     lr = 0.001
     batch_size = 1
     checkpoint_path = config.CHECKPOINT_PATH

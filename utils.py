@@ -53,36 +53,46 @@ def cell_to_image_coords(
 def plot_predictions(image, predictions: torch.Tensor):
     fig, ax = plt.subplots()
     ax.imshow(image.permute(1, 2, 0))
-    labels_obj = predictions[0][..., 0] > 0.6
-    object_classes = predictions[0][..., 5][labels_obj].unique()
-    boxes_by_class = {int(class_id): [] for class_id in object_classes}
+    boxes_by_class = {}
     for scale in range(3):
-        for object_class in object_classes:
-            class_boxes_loc = predictions[scale][..., 5] == object_class
-            class_boxes_indices = class_boxes_loc.nonzero()
-            boxes_by_class[int(object_class)] += [
-                cell_to_image_coords(
-                    config.CELL_SIZES[scale], class_boxes_indices[i][2:5], box
-                )
-                for i, box in enumerate(predictions[scale][..., 1:5][class_boxes_loc])
-            ]
 
-    # supressed_boxes = nms(
-    #     [center_to_edge_coords(box) for box in boxes_by_class[12]],
-    # )
-    for box in boxes_by_class[12]:
-        draw_box1(box, ax, "r", image.shape[1], image.shape[2])
+        labels_obj = predictions[scale][..., 0] > 0.6
+        obj_preds = predictions[scale][..., 0:][labels_obj]
+        obj_preds_indices = labels_obj.nonzero()
+        for i, obj_pred in enumerate(obj_preds):
+            obj_class = torch.argmax(obj_pred[5:]).item()
+            obj_coords = cell_to_image_coords(
+                config.CELL_SIZES[scale], obj_preds_indices[i][2:4], obj_pred[1:5]
+            )
+            obj_with_score = [obj_pred[0].item(), *obj_coords.tolist()]
+            if obj_class not in boxes_by_class:
+                boxes_by_class[obj_class] = [obj_with_score]
+            else:
+                boxes_by_class[obj_class] += [obj_with_score]
+
+    supressed_boxes = nms(
+        center_to_edge_coords(torch.tensor(boxes_by_class[12])[..., 1:5]),
+        torch.tensor(boxes_by_class[12])[..., 0],
+        iou_threshold=0.2,
+    )
+    for box in torch.tensor(boxes_by_class[12])[supressed_boxes]:
+        draw_box(box[1:5], ax, "r", image.shape[1], image.shape[2])
 
     plt.show()
 
 
-def center_to_edge_coords(coords: list):
-    return [
-        coords[0] - coords[2] / 2,
-        coords[1] - coords[3] / 2,
-        coords[0] + coords[2],
-        coords[1] + coords[3],
-    ]
+def center_to_edge_coords(boxes: torch.Tensor) -> torch.Tensor:
+    return torch.tensor(
+        [
+            [
+                coords[0] - coords[2] / 2,
+                coords[1] - coords[3] / 2,
+                coords[0] + coords[2],
+                coords[1] + coords[3],
+            ]
+            for coords in boxes
+        ]
+    )
 
 
 def draw_box1(
@@ -92,7 +102,7 @@ def draw_box1(
     image_width: float,
     image_height: float,
 ):
-    x, y, width, height = coords
+    x, y, width, height = coords.tolist()
     rect = patches.Rectangle(
         (x * image_width, y * image_height),
         width - x * image_width,
@@ -111,7 +121,7 @@ def draw_box(
     image_width: float,
     image_height: float,
 ):
-    x, y, width, height = coords
+    x, y, width, height = coords.tolist()
     rect = patches.Rectangle(
         ((x - width / 2) * image_width, (y - height / 2) * image_height),
         width * image_width,

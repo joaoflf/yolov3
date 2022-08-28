@@ -10,7 +10,6 @@ import config
 from dataset import YoloVOCDataset
 from model import YoloV3
 from utils import intersection_over_union as iou
-from utils import plot_predictions
 
 
 class YoloV3Loss(nn.Module):

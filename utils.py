@@ -50,17 +50,18 @@ def cell_to_image_coords(
     return torch.cat([x_y, w_h])
 
 
-def plot_predictions(image, predictions: torch.Tensor):
+def plot_prediction(image, predictions: torch.Tensor, pred_no: int):
     fig, ax = plt.subplots()
-    ax.imshow(image.permute(1, 2, 0))
+    ax.imshow(image[pred_no].permute(1, 2, 0))
     boxes_by_class = {}
     for scale in range(3):
 
-        labels_obj = predictions[scale][..., 0] > 0.6
-        obj_preds = predictions[scale][..., 0:][labels_obj]
+        labels_obj = predictions[scale][pred_no][..., 0] > 0.6
+        obj_preds = predictions[scale][pred_no][..., 0:][labels_obj]
         obj_preds_indices = labels_obj.nonzero()
         for i, obj_pred in enumerate(obj_preds):
             obj_class = torch.argmax(obj_pred[5:]).item()
+            # obj_class = obj_pred[5].item()
             obj_coords = cell_to_image_coords(
                 config.CELL_SIZES[scale], obj_preds_indices[i][2:4], obj_pred[1:5]
             )
@@ -76,7 +77,7 @@ def plot_predictions(image, predictions: torch.Tensor):
         iou_threshold=0.2,
     )
     for box in torch.tensor(boxes_by_class[12])[supressed_boxes]:
-        draw_box(box[1:5], ax, "r", image.shape[1], image.shape[2])
+        draw_box(box[1:5], ax, "r", image.shape[2], image.shape[3])
 
     plt.show()
 

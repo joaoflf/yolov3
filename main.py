@@ -11,7 +11,7 @@ import wandb
 from dataset import YoloVOCDataset
 from loss import YoloV3Loss
 from model import YoloV3
-from utils import plot_prediction
+from utils import check_accuracy, plot_prediction
 
 
 class Trainer:
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     loss_fn = YoloV3Loss().to(config.DEVICE)
     model = YoloV3(20).to(config.DEVICE)
     optimizer = torch.optim.Adam
-    epochs = 1000
+    epochs = 100
     lr = 0.001
     batch_size = 4
     checkpoint_path = config.CHECKPOINT_PATH
@@ -124,4 +124,5 @@ if __name__ == "__main__":
 
     model.eval()
     predictions = model(images.to(config.DEVICE))
-    plot_prediction(images, predictions, 0)
+    check_accuracy(predictions, labels)
+    # plot_prediction(images, predictions, 0)

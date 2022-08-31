@@ -82,6 +82,16 @@ def plot_prediction(image, predictions: torch.Tensor, pred_no: int):
     plt.show()
 
 
+def check_accuracy(predictions: torch.Tensor, labels: torch.Tensor):
+    for scale in range(3):
+        labels_obj = labels[scale][0][..., 0] == 1
+        label_data = labels[scale][0][..., 0:6][labels_obj]
+        pred_data = predictions[scale][0][..., 0:5][labels_obj]
+        pred_classes = [
+            torch.argmax(args) for args in predictions[scale][0][..., 5:][labels_obj]
+        ]
+
+
 def center_to_edge_coords(boxes: torch.Tensor) -> torch.Tensor:
     return torch.tensor(
         [
@@ -94,25 +104,6 @@ def center_to_edge_coords(boxes: torch.Tensor) -> torch.Tensor:
             for coords in boxes
         ]
     )
-
-
-def draw_box1(
-    coords: torch.Tensor,
-    axes: axes.Axes,
-    color: str,
-    image_width: float,
-    image_height: float,
-):
-    x, y, width, height = coords.tolist()
-    rect = patches.Rectangle(
-        (x * image_width, y * image_height),
-        width - x * image_width,
-        height - y * image_height,
-        linewidth=1,
-        edgecolor=color,
-        facecolor="none",
-    )
-    axes.add_patch(rect)
 
 
 def draw_box(

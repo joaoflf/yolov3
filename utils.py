@@ -1,9 +1,9 @@
 from tkinter import W
+
 import torch
 from matplotlib import axes, patches
 from matplotlib import pyplot as plt
 from PIL import Image
-from torchvision.ops import nms
 
 import config
 
@@ -42,12 +42,36 @@ def intersection_over_union(
     return intersection / (box1_area + box2_area - intersection + 1e-6)
 
 
+def nms(
+    boxes: torch.Tensor, confidence_threshold: float = 0.7, iou_threshold: float = 0.5
+) -> torch.Tensor:
+    boxes = boxes[boxes[:, 0] > confidence_threshold]
+    sorted_boxes, idx = torch.sort(boxes, 0, descending=True)
+    sorted_boxes = sorted_boxes.tolist()
+    suppressed_boxes = []
+
+    while len(sorted_boxes) > 0:
+        current_box = sorted_boxes.pop(0)
+        suppressed_boxes.append(current_box)
+        sorted_boxes = [
+            box
+            for box in sorted_boxes
+            if (
+                intersection_over_union(
+                    torch.tensor(current_box[1:5]), torch.tensor(box[1:5])
+                )
+                < iou_threshold
+            )
+        ]
+    return torch.tensor(suppressed_boxes)
+
+
 def cell_to_image_coords(
     cell_size: int, cell_coord: torch.Tensor, x_y: torch.Tensor, w_h: torch.Tensor
 ) -> torch.Tensor:
-    cell_coord = cell_coord * (config.IMAGE_SIZE / cell_size)
-    x_y = (x_y * (config.IMAGE_SIZE / cell_size) + cell_coord) / config.IMAGE_SIZE
-    w_h = w_h / cell_size
+    cell_coord = cell_coord * (config.IMAGE_SIZE // cell_size)
+    x_y = (x_y * (config.IMAGE_SIZE // cell_size) + cell_coord) / config.IMAGE_SIZE
+    w_h = w_h / (config.IMAGE_SIZE // cell_size)
     return torch.cat([x_y, w_h])
 
 
@@ -67,51 +91,42 @@ def plot_prediction(image, predictions: torch.Tensor, pred_no: int):
                 torch.tensor(config.ANCHORS[scale]).to(config.DEVICE)
                 * config.CELL_SIZES[scale]
             )
-            w_hs = torch.exp(obj_pred[3:5]) * anchors
-            objs_coords = [
-                cell_to_image_coords(
-                    config.CELL_SIZES[scale], obj_cell_indices[i][1:3], x_y, w_h
-                )
-                for w_h in w_hs
-            ]
-            objs_with_score = [
-                [torch.sigmoid(obj_pred[0]).item(), *obj_coords.tolist()]
-                for obj_coords in objs_coords
-            ]
+            w_h = torch.exp(obj_pred[3:5]) * anchors[obj_cell_indices[i][0]]
+            obj_coords = cell_to_image_coords(
+                config.CELL_SIZES[scale], obj_cell_indices[i][1:3], x_y, w_h
+            )
+            obj_with_score = [[torch.sigmoid(obj_pred[0]).item(), *obj_coords.tolist()]]
             if obj_class not in boxes_by_class:
-                boxes_by_class[obj_class] = objs_with_score
+                boxes_by_class[obj_class] = obj_with_score
             else:
-                boxes_by_class[obj_class] += objs_with_score
+                boxes_by_class[obj_class] += obj_with_score
 
     for class_no in boxes_by_class.keys():
-        supressed_boxes = nms(
-            center_to_edge_coords(torch.tensor(boxes_by_class[class_no])[..., 1:5]),
-            torch.tensor(boxes_by_class[class_no])[..., 0],
-            iou_threshold=0.35,
-        )
-        for box in torch.tensor(boxes_by_class[class_no])[supressed_boxes]:
+        suppressed_boxes = nms(torch.tensor(boxes_by_class[class_no]), 0.8, 0.4)
+        for box in suppressed_boxes:
             draw_box(box[1:5], ax, "r", image.shape[2], image.shape[3])
 
     plt.show()
 
 
-def check_accuracy(predictions: torch.Tensor, labels: torch.Tensor):
+def plot_labels(image: torch.Tensor, labels: torch.Tensor, label_no: int):
+    fig, ax = plt.subplots()
+    ax.imshow(image[label_no].permute(1, 2, 0))
     for scale in range(3):
-        anchors = (
-            torch.tensor(config.ANCHORS[scale]).to(config.DEVICE)
-            * config.CELL_SIZES[scale]
-        )
-        labels_obj = labels[scale][0][..., 0] == 1
-        label_data = labels[scale][0][..., 0:6][labels_obj]
-        pred_boxes = predictions[scale][0][..., 1:5][labels_obj]
-        pred_classes = [
-            torch.argmax(args) for args in predictions[scale][0][..., 5:][labels_obj]
-        ]
-        pred_boxes[..., 0:2] = torch.sigmoid(pred_boxes[..., 0:2])
-        # pred_boxes[..., 2:4] = torch.exp(pred_boxes[..., 2:4]) * anchors.reshape(
-        #     3, 1, 1, 2
-        # )
-        pred_boxes
+        labels_obj = labels[scale][label_no][..., 0] == 1
+        label_data = labels[scale][label_no][..., 0:6][labels_obj]
+
+        obj_cell_indices = labels_obj.nonzero()
+        for i, obj_label in enumerate(label_data):
+            obj_class = obj_label[5].item()
+            obj_coord = cell_to_image_coords(
+                config.CELL_SIZES[scale],
+                obj_cell_indices[i][1:3],
+                obj_label[1:3],
+                obj_label[3:5],
+            )
+            draw_box(obj_coord, ax, "r", image.shape[2], image.shape[3])
+    plt.show()
 
 
 def center_to_edge_coords(boxes: torch.Tensor) -> torch.Tensor:

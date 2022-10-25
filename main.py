@@ -11,7 +11,7 @@ import wandb
 from dataset import YoloVOCDataset
 from loss import YoloV3Loss
 from model import YoloV3
-from utils import check_accuracy, plot_prediction
+from utils import plot_labels, plot_prediction
 
 
 class Trainer:
@@ -145,3 +145,4 @@ if __name__ == "__main__":
     predictions = model(images.to(config.DEVICE))
     #    check_accuracy(predictions, labels)
     plot_prediction(images, predictions, 0)
+    # plot_labels(images, labels, 0)

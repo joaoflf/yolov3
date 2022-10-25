@@ -86,8 +86,8 @@ class YoloVOCDataset(Dataset):
                         y * self.cell_sizes[grid_index] - grid_y,
                     )
                     width_to_cell, height_to_cell = (
-                        self.cell_sizes[grid_index] * width,
-                        self.cell_sizes[grid_index] * height,
+                        config.IMAGE_SIZE // self.cell_sizes[grid_index] * width,
+                        config.IMAGE_SIZE // self.cell_sizes[grid_index] * height,
                     )
 
                     targets[grid_index][

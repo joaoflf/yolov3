@@ -104,7 +104,12 @@ def plot_prediction(image, predictions: torch.Tensor, pred_no: int):
     for class_no in boxes_by_class.keys():
         suppressed_boxes = nms(torch.tensor(boxes_by_class[class_no]), 0.8, 0.4)
         for box in suppressed_boxes:
-            draw_box(box[1:5], ax, "r", image.shape[2], image.shape[3])
+            draw_box(box[0:5], ax, "g", image.shape[2], image.shape[3], "green")
+    for box in boxes_by_class[14]:
+        if box[0] > 0.9:
+            draw_box(
+                torch.tensor(box[0:5]), ax, "r", image.shape[2], image.shape[3], "red"
+            )
 
     plt.show()
 
@@ -149,8 +154,9 @@ def draw_box(
     color: str,
     image_width: float,
     image_height: float,
+    label_color: str,
 ):
-    x, y, width, height = coords.tolist()
+    label, x, y, width, height = coords.tolist()
     rect = patches.Rectangle(
         ((x - width / 2) * image_width, (y - height / 2) * image_height),
         width * image_width,
@@ -160,3 +166,15 @@ def draw_box(
         facecolor="none",
     )
     axes.add_patch(rect)
+
+    rx, ry = rect.get_xy()
+    cx = rx + rect.get_width() / 2.0
+    cy = ry + rect.get_height() / 2.0
+    axes.annotate(
+        round(label, 3),
+        (cx, cy),
+        color=label_color,
+        fontsize=6,
+        ha="center",
+        va="center",
+    )

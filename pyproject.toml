@@ -6,7 +6,7 @@ authors = ["joaoflf <fernandesj@protonmail.com>"]
 
 [tool.poetry.dependencies]
 python = "3.10.5"
-torch = "^1.12.0"
+torch = "1.12.1"
 albumentations-experimental = "^0.0.1"
 numpy = "^1.23.1"
 pandas = "^1.4.3"
@@ -22,6 +22,7 @@ pytest = "^7.1.2"
 pytest-cov = "^3.0.0"
 tk = "^0.1.0"
 wandb = "^0.13.1"
+torchmetrics = "^0.10.2"
 
 [tool.poetry.dev-dependencies]
 

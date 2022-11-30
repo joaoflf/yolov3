@@ -1,4 +1,5 @@
 from typing import Callable
+
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
@@ -39,31 +40,31 @@ class Trainer:
     def train(self):
         wandb.init(project="yolov3")
         looper = tqdm(range(self.epochs))
+        loss = 0
         for epoch in looper:
             for index, (image, labels) in enumerate(self.dataloader):
                 loss = self.train_step(image, labels)
                 looper.set_postfix_str(str(loss))
                 wandb.log({"loss": loss})
-                if epoch == self.epochs - 1:
-                    self.save_checkpoint(epoch + 1, loss)
+            self.save_checkpoint(epoch + 1, loss)
 
     def train_step(self, image: torch.Tensor, labels: torch.Tensor) -> float:
-        outputs = model(image.to(config.DEVICE))
+        outputs = self.model(image.to(config.DEVICE))
         loss = (
             self.loss_fn(
                 outputs[0].to(config.DEVICE),
                 labels[0].to(config.DEVICE),
-                torch.tensor(self.scaled_anchors[0]),
+                self.scaled_anchors[0],
             )
             + self.loss_fn(
                 outputs[1].to(config.DEVICE),
                 labels[1].to(config.DEVICE),
-                torch.tensor(self.scaled_anchors[1]),
+                self.scaled_anchors[1],
             )
             + self.loss_fn(
                 outputs[2].to(config.DEVICE),
                 labels[2].to(config.DEVICE),
-                torch.tensor(self.scaled_anchors[2]),
+                self.scaled_anchors[2],
             )
         )
 

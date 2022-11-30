@@ -4,7 +4,10 @@ import torch
 from matplotlib import axes, patches
 from matplotlib import pyplot as plt
 from PIL import Image
+from torch.utils.data import DataLoader
 from torchmetrics.detection.mean_ap import MeanAveragePrecision
+from tqdm import tqdm
+from pprint import pprint
 import config
 
 
@@ -69,6 +72,7 @@ def non_max_suppression(bboxes, iou_threshold, threshold):
 
 def get_bboxes(
     preds: torch.Tensor,
+    confidence_threshold: float,
     anchors: torch.Tensor,
     cell_size: int,
     is_preds: bool = True,
@@ -76,7 +80,7 @@ def get_bboxes(
     with torch.no_grad():
         all_bboxes = []
         preds[..., 0] = torch.sigmoid(preds[..., 0]) if is_preds else preds[..., 0]
-        obj_indices = preds[..., 0] > 0.8
+        obj_indices = preds[..., 0] > confidence_threshold
         obj_preds = preds[..., 0:][obj_indices]
         obj_cell_indices = obj_indices.nonzero()
         for i, obj_pred in enumerate(obj_preds):
@@ -110,57 +114,90 @@ def cell_to_image_coords(
     return box_coords
 
 
-def get_mAP(preds: torch.Tensor, labels: torch.Tensor) -> dict:
+def calculate_mAP(
+    model: torch.nn.Module,
+    dataloader: DataLoader,
+    confidence_threshold: float,
+    iou_threshold: float,
+):
     with torch.no_grad():
-        all_pred_bboxes = {}
-        all_label_bboxes = {}
-        mAP_preds = []
-        mAP_labels = []
-        for scale in range(3):
-            for i, pred in enumerate(preds[scale]):
-                anchors = (
-                    torch.tensor(config.ANCHORS[scale]).to(config.DEVICE)
-                    * config.CELL_SIZES[scale]
-                )
-                pred_bboxes = get_bboxes(pred, anchors, config.CELL_SIZES[scale])
-                if all_pred_bboxes.get(i) is None:
-                    all_pred_bboxes[i] = pred_bboxes
-                    label_bboxes = get_bboxes(
-                        labels[2][i], torch.tensor([]), config.CELL_SIZES[2], False
-                    )
-                    all_label_bboxes[i] = label_bboxes
-                else:
-                    all_pred_bboxes[i] += pred_bboxes
-
-        for pred_bboxes in all_pred_bboxes.values():
-            suppressed_bboxes = non_max_suppression(pred_bboxes, 0.4, 0.5)
-            mAP_preds += [
-                dict(
-                    boxes=torch.tensor(
-                        list(map(lambda obj: obj[2:6], suppressed_bboxes))
-                    ),
-                    scores=torch.tensor(
-                        list(map(lambda obj: obj[1], suppressed_bboxes))
-                    ),
-                    labels=torch.tensor(
-                        list(map(lambda obj: obj[0], suppressed_bboxes))
-                    ),
-                )
-            ]
-        for label_bboxes in all_label_bboxes.values():
-            mAP_labels += [
-                dict(
-                    boxes=torch.tensor(list(map(lambda obj: obj[2:6], label_bboxes))),
-                    labels=torch.tensor(list(map(lambda obj: obj[0], label_bboxes))),
-                )
-            ]
-
+        model.eval()
         mAP = MeanAveragePrecision(box_format="cxcywh")
-        mAP.update(mAP_preds, mAP_labels)
-        return mAP.compute()
+        total_mAP = 0
+        total_mAP_50 = 0
+        total_mAP_75 = 0
+        looper = tqdm(dataloader, total=len(dataloader))
+        for imgs, labels in looper:
+            imgs = imgs.to(config.DEVICE)
+            preds = model(imgs)
+            all_pred_bboxes = {}
+            all_label_bboxes = {}
+            mAP_preds = []
+            mAP_labels = []
+            for scale in range(3):
+                for i, pred in enumerate(preds[scale]):
+                    anchors = (
+                        torch.tensor(config.ANCHORS[scale]).to(config.DEVICE)
+                        * config.CELL_SIZES[scale]
+                    )
+                    pred_bboxes = get_bboxes(
+                        pred, confidence_threshold, anchors, config.CELL_SIZES[scale]
+                    )
+                    if all_pred_bboxes.get(i) is None:
+                        all_pred_bboxes[i] = pred_bboxes
+                        label_bboxes = get_bboxes(
+                            labels[2][i],
+                            confidence_threshold,
+                            torch.tensor([]),
+                            config.CELL_SIZES[2],
+                            False,
+                        )
+                        all_label_bboxes[i] = label_bboxes
+                    else:
+                        all_pred_bboxes[i] += pred_bboxes
+
+            for pred_bboxes in all_pred_bboxes.values():
+                suppressed_bboxes = non_max_suppression(
+                    pred_bboxes, confidence_threshold, iou_threshold
+                )
+                mAP_preds += [
+                    dict(
+                        boxes=torch.tensor(
+                            list(map(lambda obj: obj[2:6], suppressed_bboxes))
+                        ),
+                        scores=torch.tensor(
+                            list(map(lambda obj: obj[1], suppressed_bboxes))
+                        ),
+                        labels=torch.tensor(
+                            list(map(lambda obj: obj[0], suppressed_bboxes))
+                        ),
+                    )
+                ]
+            for label_bboxes in all_label_bboxes.values():
+                mAP_labels += [
+                    dict(
+                        boxes=torch.tensor(
+                            list(map(lambda obj: obj[2:6], label_bboxes))
+                        ),
+                        labels=torch.tensor(
+                            list(map(lambda obj: obj[0], label_bboxes))
+                        ),
+                    )
+                ]
+
+            mAP.update(mAP_preds, mAP_labels)
+        results = mAP.compute()
+        looper.set_postfix_str(results["map"])
+        pprint(results)
 
 
-def plot_prediction(image, predictions: torch.Tensor, pred_no: int):
+def plot_prediction(
+    image,
+    predictions: torch.Tensor,
+    pred_no: int,
+    confidence_threshold: float,
+    iou_threshold: float,
+):
     fig, ax = plt.subplots()
     ax.imshow(image[pred_no].permute(1, 2, 0))
     all_boxes = []
@@ -170,23 +207,36 @@ def plot_prediction(image, predictions: torch.Tensor, pred_no: int):
             * config.CELL_SIZES[scale]
         )
         bboxes = get_bboxes(
-            predictions[scale][pred_no], anchors, config.CELL_SIZES[scale]
+            predictions[scale][pred_no],
+            confidence_threshold,
+            anchors,
+            config.CELL_SIZES[scale],
         )
         all_boxes += bboxes
 
-    suppressed_boxes = non_max_suppression(all_boxes, 0.4, 0.5)
+    suppressed_boxes = non_max_suppression(
+        all_boxes, confidence_threshold, iou_threshold
+    )
     for box in suppressed_boxes:
         draw_box(box[2:6], box[1], ax, "r", image.shape[2], image.shape[3])
     plt.show()
 
 
-def plot_labels(image: torch.Tensor, labels: torch.Tensor, label_no: int):
+def plot_labels(
+    image: torch.Tensor,
+    labels: torch.Tensor,
+    label_no: int,
+):
     fig, ax = plt.subplots()
     ax.imshow(image[label_no].permute(1, 2, 0))
     scale = 2
 
     bboxes = get_bboxes(
-        labels[scale][label_no], torch.tensor([]), config.CELL_SIZES[scale], False
+        labels[scale][label_no],
+        0.99,
+        torch.tensor([]),
+        config.CELL_SIZES[scale],
+        False,
     )
     for box in bboxes:
         draw_box(box[2:6], box[0], ax, "purple", image.shape[2], image.shape[3])

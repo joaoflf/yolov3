@@ -110,14 +110,11 @@ class YoloV3(nn.Module):
         ]
 
         self.first_prediction = ScalePrediction(1024, num_classes)
-        self.first_prediction.exit_point_output = (
-            None  # 'have to init to access in forward'
-        )
+
         self.first_upsample = nn.Sequential(
             CNNBlock(1024, 512, kernel_size=1, stride=1), nn.Upsample(scale_factor=2)
         )
         self.second_prediction = ScalePrediction(1024, num_classes)
-        self.second_prediction.exit_point_output = None
         self.second_upsample = nn.Sequential(
             CNNBlock(1024, 256, kernel_size=1, stride=1), nn.Upsample(scale_factor=2)
         )

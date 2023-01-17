@@ -4,11 +4,6 @@ import albumentations as A
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
-from torchvision.ops import box_iou
-
-import config
-from dataset import YoloVOCDataset
-from model import YoloV3
 from utils import intersection_over_union as iou
 
 

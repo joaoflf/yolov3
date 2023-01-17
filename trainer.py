@@ -2,6 +2,7 @@ from typing import Callable
 
 import torch
 from torch import nn
+from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
@@ -31,6 +32,7 @@ class Trainer:
         self.learning_rate = learning_rate
         self.checkpoint_path = checkpoint_path
         self.scaler = torch.cuda.amp.GradScaler()
+        # self.scheduler = StepLR(self.optimizer, step_size=5, gamma=0.7)
         wandb.config = {
             "learning_rate": learning_rate,
             "epochs": epochs,
@@ -40,13 +42,15 @@ class Trainer:
     def train(self):
         wandb.init(project="yolov3")
         looper = tqdm(range(self.epochs))
-        loss = 0
         for epoch in looper:
+            epoch_loss = 0
             for index, (image, labels) in enumerate(self.dataloader):
                 loss = self.train_step(image, labels)
-                looper.set_postfix_str(str(loss))
-                wandb.log({"loss": loss})
-            self.save_checkpoint(epoch + 1, loss)
+                epoch_loss += loss
+            epoch_loss /= len(self.dataloader)
+            looper.set_postfix_str(str(epoch_loss))
+            wandb.log({"loss": epoch_loss})
+            self.save_checkpoint(epoch + 1, epoch_loss)
 
     def train_step(self, image: torch.Tensor, labels: torch.Tensor) -> float:
         outputs = self.model(image.to(config.DEVICE))

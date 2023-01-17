@@ -6,7 +6,7 @@ authors = ["joaoflf <fernandesj@protonmail.com>"]
 
 [tool.poetry.dependencies]
 python = "3.10.5"
-torch = "1.12.1"
+torch = "2.0"
 albumentations-experimental = "^0.0.1"
 numpy = "^1.23.1"
 pandas = "^1.4.3"
@@ -14,7 +14,6 @@ tqdm = "^4.64.0"
 matplotlib = "^3.5.2"
 scipy = "^1.8.1"
 nms = "^0.1.6"
-torchvision = "^0.13.0"
 jupyter = "^1.0.0"
 notebook = "^6.4.12"
 black = "^22.6.0"

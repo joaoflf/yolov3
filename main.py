@@ -23,8 +23,8 @@ if __name__ == "__main__":
     loss_fn = YoloV3Loss().to(config.DEVICE)
     model = YoloV3(20).to(config.DEVICE)
     optimizer = torch.optim.Adam
-    epochs = 100
-    lr = 0.001
+    epochs = 200
+    lr = 3e-4
     checkpoint_path = config.CHECKPOINT_PATH
     scaled_anchors = (
         torch.tensor(config.ANCHORS)
